@@ -16,15 +16,18 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA	   02110-1301	 USA
 #
 # Changelog:
-#   10/06/2013 - 1.0 - LouK
-#     · Initial plugin command (!ultrauserinfo)
+#
+#   28/06/2013 - 1.2 - LouK 
+#     · Added !ultraserverinfo command
 #   14/06/2013 - 1.1 - LouK 
 #     · More functions for uui: Aliases, watchlist
 #     · Empty data ommited for !uui
 #     · Added !ultralist command
 #     · First .xml functions
+#   10/06/2013 - 1.0 - LouK
+#     · Initial plugin command (!ultrauserinfo)
 
-__version__ = '1.1'
+__version__ = '1.2'
 __author__  = 'LouK'
 
 import b3, re, threading, traceback, thread, datetime, time, random
@@ -33,7 +36,7 @@ import b3.plugin
 import b3.cron
 import ConfigParser
 
-from b3.plugins.welcome import WelcomePlugin
+
 from b3.translator import translate
 from b3 import geoip
 from b3 import functions
@@ -388,5 +391,73 @@ class UltraadminPlugin(b3.plugin.Plugin):
         for c in self.console.clients.getClientsByLevel():
             names.append(self.getMessage('ultra_list', c.cid, c.name, c.id, c.maxLevel, c.connections, c.ip, c.numWarnings, len(bans)))
 
-        cmd.sayLoudOrPM(client, ', '.join(names))
+        cmd.sayLoudOrPM(client, ',^%s '.join(names) % random)
         return True
+        
+    def cmd_ultraserverinfo(self, data, client=None, cmd=None):
+        """\
+        - list ultra information about the server.
+        """
+        
+        
+        if not self.console.storage.status():
+            cmd.sayLoudOrPM(client, '^7Cannot lookup, database apears to be ^1DOWN')
+            return False
+            
+	#Get SQL information
+        players = self.console.storage.query("""SELECT * FROM clients """)
+        total_admins = self.console.storage.query("""SELECT id FROM clients WHERE (group_bits='32' OR group_bits='256' OR group_bits='4096' OR group_bits='65536' OR group_bits='2097152') """)
+        follow = self.console.storage.query("""SELECT id FROM following """)
+        totalbans = self.console.storage.query("""SELECT id FROM penalties WHERE (type = "tempban" OR type = "ban") """)
+        permbans = self.console.storage.query("""SELECT id FROM penalties WHERE type= 'ban' """)
+        warns = self.console.storage.query("""SELECT c.id, c.name, p.time_expire FROM penalties p, clients c  WHERE p.client_id = c.id AND p.inactive = 0 AND  type='Warning' AND p.time_expire >= UNIX_TIMESTAMP() """)
+        tempbans = self.console.storage.query("""SELECT id FROM penalties WHERE type= 'tempban' """)
+        
+        #Get server information
+        servername = self.console.getCvar('sv_hostname').getString()
+        maxclients = self.console.getCvar('sv_maxclients').getString()
+        privateclients = self.console.getCvar('sv_privateClients').getString()
+        gametype = self.console.getCvar('g_gametype').getInt()
+        download = self.console.getCvar('sv_dlURL').getString()
+        timelimit = self.console.getCvar('timelimit').getString()
+        fraglimit = self.console.getCvar('fraglimit').getString()
+        
+        if gametype==0:
+            
+            gametype='FFA'
+
+        if gametype==1:
+            
+            gametype='LMS'
+
+        if gametype==3:
+            
+            gametype='TDM'
+
+        if gametype==4:
+            
+            gametype='TS'
+
+        if gametype==7:
+            
+            gametype='CTF'
+        
+        if gametype==8:
+            
+            gametype='Bomb'
+
+        if gametype==9:
+            
+            gametype='Jump'
+
+        cmd.sayLoudOrPM(client, "^2Server^7: %s" % servername)
+        cmd.sayLoudOrPM(client, "^2Download maps URL^7: ^5%s" % download)
+        cmd.sayLoudOrPM(client, "^2Public Slots^7: ^5%s^7, ^2Private Slots^7: ^5%s" % (maxclients, privateclients))
+        cmd.sayLoudOrPM(client, "^2Gametype^7: ^5%s^7, ^2Timelimit^7: ^5%s^7, ^2Fraglimit^7: ^5%s" % (gametype, timelimit, fraglimit))
+        cmd.sayLoudOrPM(client, "^2Permbans^7: ^5%s" % permbans.rowcount)
+        cmd.sayLoudOrPM(client, "^2Tempbans^7: ^5%s" % tempbans.rowcount)
+        cmd.sayLoudOrPM(client, "^2Active Warnings^7: ^5%s" % warns.rowcount)
+        cmd.sayLoudOrPM(client, "^2Admins: ^5%s" % total_admins.rowcount)
+        cmd.sayLoudOrPM(client, "^2Players in Watchlist^7: ^5%s" % follow.rowcount)
+        cmd.sayLoudOrPM(client, "^2Total Players^7: ^5%s" % players.rowcount)
+
