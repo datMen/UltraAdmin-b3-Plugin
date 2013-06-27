@@ -1,4 +1,4 @@
-# UltraAdmin Plugin v. 1.1
+# UltraAdmin Plugin
 ##### Plugin for B3 (www.bigbrotherbot.com)
 ##### Author: LouK(8thelouk8@gmail.com) from the Sni:{Per}:Jum Clan: http://sniperjum.wix.com/clan
 =
