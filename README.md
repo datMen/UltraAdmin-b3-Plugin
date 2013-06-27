@@ -1,4 +1,4 @@
-# UltraAdmin Plugin
+# UltraAdmin Plugin v. 1.1
 ##### Plugin for B3 (www.bigbrotherbot.com)
 ##### Author: LouK(8thelouk8@gmail.com) from the Sni:{Per}:Jum Clan: http://sniperjum.wix.com/clan
 =
@@ -47,4 +47,3 @@ In order to use this plugin, you need to have some other's in your b3:
 - Active warns(number)
 - Past bans(number)
 
-=
