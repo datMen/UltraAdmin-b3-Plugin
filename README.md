@@ -63,7 +63,7 @@ In order to use this plugin, you need to have some other's in your b3:
 - All Admins number
 - Players in the watchlist number
 - Total Players number
-- 
+
 #### !ultrab3 (!ub3)
 > Display advanced info about b3.
 
