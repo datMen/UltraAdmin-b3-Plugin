@@ -47,3 +47,17 @@ In order to use this plugin, you need to have some other's in your b3:
 - Active warns(number)
 - Past bans(number)
 
+#### !ultraserverinfo (!usi)
+> Display advanced info about the server.
+> Note: This command may take some time to be processed, it has to find a lot of information
+
+- Server name
+- Download maps URL
+- Maxclients / Privateclients
+- Gametype / Timelimit / Fraglimit
+- All Active Permbans number
+- All Active Tempbans number
+- All Active Warnings number
+- All Admins number
+- Players in the watchlist number
+- Total Players number
