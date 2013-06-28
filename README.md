@@ -49,7 +49,7 @@ In order to use this plugin, you need to have some other's in your b3:
 
 #### !ultraserverinfo (!usi)
 > Display advanced info about the server.
-> Note: This command may take some time to be processed, it has to find a lot of information
+> > Note: This command may take some time to be processed, it has to find a lot of information
 
 - Server name
 - Download maps URL
