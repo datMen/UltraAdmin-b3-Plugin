@@ -17,7 +17,11 @@
 #
 # Changelog:
 #
-#   28/06/2013 - 1.2 - LouK 
+#   29/06/2013 - 1.3 - LouK 
+#     · Added !ultrab3 command
+#     · !ultralist improved: removed client IP and changed look
+#     · Changed ultraserverinfo, added more information
+#   27/06/2013 - 1.2 - LouK 
 #     · Added !ultraserverinfo command
 #   14/06/2013 - 1.1 - LouK 
 #     · More functions for uui: Aliases, watchlist
@@ -27,7 +31,7 @@
 #   10/06/2013 - 1.0 - LouK
 #     · Initial plugin command (!ultrauserinfo)
 
-__version__ = '1.2'
+__version__ = '1.3'
 __author__  = 'LouK'
 
 import b3, re, threading, traceback, thread, datetime, time, random
@@ -296,7 +300,7 @@ class UltraadminPlugin(b3.plugin.Plugin):
         return func
 
       return None
-#-------------Commands-------------------------------------------------------------------
+#--------Commands-----------------------------------------------------
 
     def cmd_ultrauserinfo(self, data, client=None, cmd=None):
         """\
@@ -389,38 +393,19 @@ class UltraadminPlugin(b3.plugin.Plugin):
         names = []
         bans = self.get_player_bans(client)
         for c in self.console.clients.getClientsByLevel():
-            names.append(self.getMessage('ultra_list', c.cid, c.name, c.id, c.maxLevel, c.connections, c.ip, c.numWarnings, len(bans)))
+            names.append(self.getMessage('ultra_list', c.cid, c.name, c.id, c.maxLevel, c.connections, c.numWarnings, len(bans)))
 
-        cmd.sayLoudOrPM(client, ',^%s '.join(names) % random)
+        for b in names:
+            cmd.sayLoudOrPM(client,  b)
         return True
         
     def cmd_ultraserverinfo(self, data, client=None, cmd=None):
         """\
         - list ultra information about the server.
         """
-        
-        
-        if not self.console.storage.status():
-            cmd.sayLoudOrPM(client, '^7Cannot lookup, database apears to be ^1DOWN')
-            return False
             
-	#Get SQL information
-        players = self.console.storage.query("""SELECT * FROM clients """)
-        total_admins = self.console.storage.query("""SELECT id FROM clients WHERE (group_bits='32' OR group_bits='256' OR group_bits='4096' OR group_bits='65536' OR group_bits='2097152') """)
-        follow = self.console.storage.query("""SELECT id FROM following """)
-        totalbans = self.console.storage.query("""SELECT id FROM penalties WHERE (type = "tempban" OR type = "ban") """)
-        permbans = self.console.storage.query("""SELECT id FROM penalties WHERE type= 'ban' """)
-        warns = self.console.storage.query("""SELECT c.id, c.name, p.time_expire FROM penalties p, clients c  WHERE p.client_id = c.id AND p.inactive = 0 AND  type='Warning' AND p.time_expire >= UNIX_TIMESTAMP() """)
-        tempbans = self.console.storage.query("""SELECT id FROM penalties WHERE type= 'tempban' """)
-        
         #Get server information
-        servername = self.console.getCvar('sv_hostname').getString()
-        maxclients = self.console.getCvar('sv_maxclients').getString()
-        privateclients = self.console.getCvar('sv_privateClients').getString()
         gametype = self.console.getCvar('g_gametype').getInt()
-        download = self.console.getCvar('sv_dlURL').getString()
-        timelimit = self.console.getCvar('timelimit').getString()
-        fraglimit = self.console.getCvar('fraglimit').getString()
         
         if gametype==0:
             
@@ -450,14 +435,41 @@ class UltraadminPlugin(b3.plugin.Plugin):
             
             gametype='Jump'
 
-        cmd.sayLoudOrPM(client, "^2Server^7: %s" % servername)
-        cmd.sayLoudOrPM(client, "^2Download maps URL^7: ^5%s" % download)
-        cmd.sayLoudOrPM(client, "^2Public Slots^7: ^5%s^7, ^2Private Slots^7: ^5%s" % (maxclients, privateclients))
-        cmd.sayLoudOrPM(client, "^2Gametype^7: ^5%s^7, ^2Timelimit^7: ^5%s^7, ^2Fraglimit^7: ^5%s" % (gametype, timelimit, fraglimit))
-        cmd.sayLoudOrPM(client, "^2Permbans^7: ^5%s" % permbans.rowcount)
-        cmd.sayLoudOrPM(client, "^2Tempbans^7: ^5%s" % tempbans.rowcount)
-        cmd.sayLoudOrPM(client, "^2Active Warnings^7: ^5%s" % warns.rowcount)
-        cmd.sayLoudOrPM(client, "^2Admins: ^5%s" % total_admins.rowcount)
-        cmd.sayLoudOrPM(client, "^2Players in Watchlist^7: ^5%s" % follow.rowcount)
-        cmd.sayLoudOrPM(client, "^2Total Players^7: ^5%s" % players.rowcount)
+        
+        cmd.sayLoudOrPM(client, "^7Server: %s" % self.console.getCvar('sv_hostname').getString())
+        cmd.sayLoudOrPM(client, "^7Version: ^5%s" % self.console.getCvar('version').getString())
+        cmd.sayLoudOrPM(client, "^7Public Slots: ^2%s" % self.console.getCvar('sv_maxclients').getString())
+        cmd.sayLoudOrPM(client, "^7Private Slots: ^2%s" % self.console.getCvar('sv_privateClients').getString())
+        cmd.sayLoudOrPM(client, "^7Gametype: ^2%s" % gametype)
+        cmd.sayLoudOrPM(client, "^7Timelimit: ^2%s" % self.console.getCvar('timelimit').getString())
+        cmd.sayLoudOrPM(client, "^7Fraglimit: ^2%s" % self.console.getCvar('fraglimit').getString())
+        cmd.sayLoudOrPM(client, "^7Current map: ^2%s" % self.console.getCvar('mapname').getString())
+        cmd.sayLoudOrPM(client, "^7Next map: ^5%s" % self.console.getCvar('g_nextCycleMap').getString())
+        
+    def cmd_ultrab3(self, data, client=None, cmd=None):
+        """\
+        - list ultra information about the server.
+        """
+        
+        
+        if not self.console.storage.status():
+            cmd.sayLoudOrPM(client, '^7Cannot lookup, database apears to be ^1DOWN')
+            return False
+            
+		#Get SQL information
+        players = self.console.storage.query("""SELECT * FROM clients """)
+        total_admins = self.console.storage.query("""SELECT id FROM clients WHERE (group_bits='32' OR group_bits='256' OR group_bits='4096' OR group_bits='65536' OR group_bits='2097152') """)
+        follow = self.console.storage.query("""SELECT id FROM following """)
+        totalbans = self.console.storage.query("""SELECT id FROM penalties WHERE (type = "tempban" OR type = "ban") """)
+        permbans = self.console.storage.query("""SELECT id FROM penalties WHERE type= 'ban' AND time_expire = '-1' """)
+        warns = self.console.storage.query("""SELECT c.id, c.name, p.time_expire FROM penalties p, clients c  WHERE p.client_id = c.id AND p.inactive = 0 AND  type='Warning' AND p.time_expire >= UNIX_TIMESTAMP() """)
+        tempbans = self.console.storage.query("""SELECT id FROM penalties WHERE type= 'tempban' AND inactive = 0 AND time_expire >= UNIX_TIMESTAMP() """)
 
+        cmd.sayLoudOrPM(client, '^7Version: ^1%s' % self.console.getCvar('_B3').getString())
+        cmd.sayLoudOrPM(client, '^7Uptime: [^2%s^7]' % (functions.minutesStr(self.console.upTime() / 60.0)))
+        cmd.sayLoudOrPM(client, "^7Total Players: ^5%s" % players.rowcount)
+        cmd.sayLoudOrPM(client, "^7Admins: ^5%s" % total_admins.rowcount)
+        cmd.sayLoudOrPM(client, "^7Players in Watchlist: ^5%s" % follow.rowcount)
+        cmd.sayLoudOrPM(client, "^7Permbans: ^5%s" % permbans.rowcount)
+        cmd.sayLoudOrPM(client, "^7Active Tempbans: ^5%s" % tempbans.rowcount)
+        cmd.sayLoudOrPM(client, "^7Active Warnings: ^5%s" % warns.rowcount)
