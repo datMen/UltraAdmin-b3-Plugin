@@ -36,14 +36,13 @@ In order to use this plugin, you need to have some other's in your b3:
 - Past bans(displayed only if the player has past bans)
 
 #### !ultralist (!ul)
-> Display information(less than uui) about connected players.
+> Display schematic information about connected players.
 
-- Server id: playerlist number
+- Client id: playerlist number
 - Exact player's name
 - b3 @id
 - b3 level
 - Player's connections number
-- Player's IP
 - Active warns(number)
 - Past bans(number)
 
@@ -52,12 +51,27 @@ In order to use this plugin, you need to have some other's in your b3:
 > > Note: This command may take some time to be processed, it has to find a lot of information
 
 - Server name
-- Download maps URL
-- Maxclients / Privateclients
-- Gametype / Timelimit / Fraglimit
-- All Active Permbans number
-- All Active Tempbans number
+- Server Version
+- Public Slots
+- Private Slots
+- Gametype
+- Timelimit
+- Fraglimit
+- Current map
+- Next map
 - All Active Warnings number
 - All Admins number
 - Players in the watchlist number
 - Total Players number
+- 
+#### !ultrab3 (!ub3)
+> Display advanced info about b3.
+
+- b3 Version
+- Uptime
+- Total Players number
+- Total Admins number
+- Players in watchlist number
+- Permbans
+- Active Tempbans number
+- Active Warnings number
