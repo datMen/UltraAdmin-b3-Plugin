@@ -1,7 +1,8 @@
 <configuration plugin="ultraadmin">
    <settings name="commands">
       <set name="ultrauserinfo-uui">60</set>
-      <set name="ultralist-ul">40</set>
+      <set name="ultralist-ul">60</set>
+      <set name="ultraserverinfo-usi">40</set>
    </settings>
    <settings name="messages">
     <set name="general_info">^0%s.^7 %s^7 [^2@%s^7] is a  ^2%s^7 [^1%s^7], connected: ^6%s ^7times. ^4%s ^7from: %s</set>
