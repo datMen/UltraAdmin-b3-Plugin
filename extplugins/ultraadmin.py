@@ -14,22 +14,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA	   02110-1301	 USA
-#
-# Changelog:
-#
-#   29/06/2013 - 1.3 - LouK 
-#     · Added !ultrab3 command
-#     · !ultralist improved: removed client IP and changed look
-#     · Changed ultraserverinfo, added more information
-#   27/06/2013 - 1.2 - LouK 
-#     · Added !ultraserverinfo command
-#   14/06/2013 - 1.1 - LouK 
-#     · More functions for uui: Aliases, watchlist
-#     · Empty data ommited for !uui
-#     · Added !ultralist command
-#     · First .xml functions
-#   10/06/2013 - 1.0 - LouK
-#     · Initial plugin command (!ultrauserinfo)
 
 __version__ = '1.3'
 __author__  = 'LouK'
