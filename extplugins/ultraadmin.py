@@ -443,6 +443,7 @@ class UltraadminPlugin(b3.plugin.Plugin):
 		#Get SQL information
         players = self.console.storage.query("""SELECT * FROM clients """)
         total_admins = self.console.storage.query("""SELECT id FROM clients WHERE (group_bits='32' OR group_bits='256' OR group_bits='4096' OR group_bits='65536' OR group_bits='2097152') """)
+        total_regulars = self.console.storage.query("""SELECT id FROM clients WHERE group_bits='2' """)
         follow = self.console.storage.query("""SELECT id FROM following """)
         totalbans = self.console.storage.query("""SELECT id FROM penalties WHERE (type = "tempban" OR type = "ban") """)
         permbans = self.console.storage.query("""SELECT id FROM penalties WHERE type= 'ban' AND time_expire = '-1' """)
@@ -453,6 +454,7 @@ class UltraadminPlugin(b3.plugin.Plugin):
         cmd.sayLoudOrPM(client, '^7Uptime: [^2%s^7]' % (functions.minutesStr(self.console.upTime() / 60.0)))
         cmd.sayLoudOrPM(client, "^7Total Players: ^5%s" % players.rowcount)
         cmd.sayLoudOrPM(client, "^7Admins: ^5%s" % total_admins.rowcount)
+        cmd.sayLoudOrPM(client, "^7Regulars: ^5%s" % total_regulars.rowcount)
         cmd.sayLoudOrPM(client, "^7Players in Watchlist: ^5%s" % follow.rowcount)
         cmd.sayLoudOrPM(client, "^7Permbans: ^5%s" % permbans.rowcount)
         cmd.sayLoudOrPM(client, "^7Active Tempbans: ^5%s" % tempbans.rowcount)
