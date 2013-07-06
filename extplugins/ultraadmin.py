@@ -450,7 +450,7 @@ class UltraadminPlugin(b3.plugin.Plugin):
         warns = self.console.storage.query("""SELECT c.id, c.name, p.time_expire FROM penalties p, clients c  WHERE p.client_id = c.id AND p.inactive = 0 AND  type='Warning' AND p.time_expire >= UNIX_TIMESTAMP() """)
         tempbans = self.console.storage.query("""SELECT id FROM penalties WHERE type= 'tempban' AND inactive = 0 AND time_expire >= UNIX_TIMESTAMP() """)
 
-        cmd.sayLoudOrPM(client, '^7Version: ^1%s' % self.console.getCvar('_B3').getString())
+        cmd.sayLoudOrPM(client, '^7Version: ^1%s' % b3.version)
         cmd.sayLoudOrPM(client, '^7Uptime: [^2%s^7]' % (functions.minutesStr(self.console.upTime() / 60.0)))
         cmd.sayLoudOrPM(client, "^7Total Players: ^5%s" % players.rowcount)
         cmd.sayLoudOrPM(client, "^7Admins: ^5%s" % total_admins.rowcount)
