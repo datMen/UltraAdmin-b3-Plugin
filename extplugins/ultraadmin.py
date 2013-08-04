@@ -424,7 +424,7 @@ class UltraadminPlugin(b3.plugin.Plugin):
         cmd.sayLoudOrPM(client, "^7Version: ^5%s" % self.console.getCvar('version').getString())
         cmd.sayLoudOrPM(client, "^7Public Slots: ^2%s" % self.console.getCvar('sv_maxclients').getString())
         cmd.sayLoudOrPM(client, "^7Private Slots: ^2%s" % self.console.getCvar('sv_privateClients').getString())
-        cmd.sayLoudOrPM(client, "^7Gametype: ^2%s" % gametype)
+        cmd.sayLoudOrPM(client, "^7Gametype: ^5%s" % gametype)
         cmd.sayLoudOrPM(client, "^7Timelimit: ^2%s" % self.console.getCvar('timelimit').getString())
         cmd.sayLoudOrPM(client, "^7Fraglimit: ^2%s" % self.console.getCvar('fraglimit').getString())
         cmd.sayLoudOrPM(client, "^7Current map: ^2%s" % self.console.getCvar('mapname').getString())
