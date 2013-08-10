@@ -375,9 +375,9 @@ class UltraadminPlugin(b3.plugin.Plugin):
 
     def doUltraList(self, client, cmd):
         names = []
-        bans = self.get_player_bans(client)
         for c in self.console.clients.getClientsByLevel():
-            names.append(self.getMessage('ultra_list', c.cid, c.name, c.id, c.maxLevel, c.connections, c.numWarnings, len(bans)))
+            pastbans = self.console.storage.query("""SELECT id FROM penalties WHERE (type = "tempban" OR type = "ban") AND client_id = "%s" """ % c.id)
+            names.append(self.getMessage('ultra_list', c.cid, c.name, c.id, c.maxLevel, c.connections, c.numWarnings, pastbans))
 
         for b in names:
             cmd.sayLoudOrPM(client,  b)
