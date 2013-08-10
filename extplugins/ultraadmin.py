@@ -392,31 +392,18 @@ class UltraadminPlugin(b3.plugin.Plugin):
         gametype = self.console.getCvar('g_gametype').getInt()
         
         if gametype==0:
-            
             gametype='FFA'
-
         if gametype==1:
-            
             gametype='LMS'
-
         if gametype==3:
-            
             gametype='TDM'
-
         if gametype==4:
-            
             gametype='TS'
-
         if gametype==7:
-            
             gametype='CTF'
-        
         if gametype==8:
-            
             gametype='Bomb'
-
         if gametype==9:
-            
             gametype='Jump'
 
         
