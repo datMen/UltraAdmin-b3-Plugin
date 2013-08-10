@@ -390,6 +390,7 @@ class UltraadminPlugin(b3.plugin.Plugin):
             
         #Get server information
         gametype = self.console.getCvar('g_gametype').getInt()
+        mapname = self.console.getNextMap()
         
         if gametype==0:
             gametype='FFA'
@@ -415,7 +416,7 @@ class UltraadminPlugin(b3.plugin.Plugin):
         cmd.sayLoudOrPM(client, "^7Timelimit: ^2%s" % self.console.getCvar('timelimit').getString())
         cmd.sayLoudOrPM(client, "^7Fraglimit: ^2%s" % self.console.getCvar('fraglimit').getString())
         cmd.sayLoudOrPM(client, "^7Current map: ^2%s" % self.console.getCvar('mapname').getString())
-        cmd.sayLoudOrPM(client, "^7Next map: ^5%s" % self.console.getCvar('g_NextMap').getString())
+        cmd.sayLoudOrPM(client, "^7Next Map: ^2%s" % mapname)
         
     def cmd_ultrab3(self, data, client=None, cmd=None):
         """\
