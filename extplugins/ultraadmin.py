@@ -75,23 +75,40 @@ class UltraadminPlugin(b3.plugin.Plugin):
 			self.onClientConnect(event.client)
 		elif event.type == b3.events.EVT_CLIENT_BAN_TEMP or event.type == b3.events.EVT_CLIENT_BAN:
 			self.tell_bans(event.client)
-	
-    def get_player_bans(self,  client):
-		cursor = self.console.storage.query(
-		"""SELECT a.name, p.reason, p.time_expire  FROM penalties p, clients a
-		WHERE a.id = p.admin_id AND (p.type = "tempban" OR p.type = "ban") AND p.client_id = %s """%(client.id))
-		bans = []
-		if cursor.rowcount > 0:
-			while not cursor.EOF:
-				r = cursor.getRow()
-				bans.append("by %s, reason: ^1%s ^7until ^3%s" %(r['name'],  r['reason'],  self.console.formatTime(r['time_expire'])))
-				cursor.moveNext()
-		cursor.close()
-		return bans
+            
+    def get_all_player_bans(self,  client):
+        cursor1 = self.console.storage.query(
+        """SELECT id,name FROM clients ORDER BY id ASC""")
+        client_id = []
+        client_name = []
+        if cursor1.rowcount > 0:
+            while not cursor1.EOF:
+                r = cursor1.getRow()
+                client_id.append(r['id'])
+                client_name.append(r['name'])
+                cursor1.moveNext()
+        cursor1.close()
+        
+        cursor = self.console.storage.query(
+        """SELECT admin_id, reason, time_expire FROM penalties 
+        WHERE (TYPE =  "tempban" OR TYPE =  "ban") AND client_id = %s """%(client.id))
+        bans = []
+        if cursor.rowcount > 0:
+            while not cursor.EOF:
+                r = cursor.getRow()  
+                for n in range(len(client_id)):
+                    if r['admin_id'] == client_id[n]:
+                        admin_name = client_name[n]
+                    if r['admin_id'] == 0:
+                        admin_name = ":{(Per)}:"              
+                bans.append("by %s, reason: ^1%s ^7until ^3%s" %(admin_name,  r['reason'],  self.console.formatTime(r['time_expire'])))
+                cursor.moveNext()
+        cursor.close()
+        return bans
 	
     def tell_bans(self, client):
 		a = self._adminPlugin.getAdmins()
-		bans = self.get_player_bans(client)
+		bans = self.get_all_player_bans(client)
 
 		if len(a) > 0 and len(bans) > 0:
 			for adm in a:
@@ -306,7 +323,7 @@ class UltraadminPlugin(b3.plugin.Plugin):
 			return
 
         self._country_format = '^1%(city)s ^7[^3%(country_name)s^7]'
-        bans = self.get_player_bans(sclient)
+        bans = self.get_all_player_bans(sclient)
         location = self.get_client_location(sclient)
         country = translate(self._country_format % location)
         cursor = self.console.storage.query(self._SELECT_QUERY % sclient.id)
@@ -377,8 +394,8 @@ class UltraadminPlugin(b3.plugin.Plugin):
         names = []
         for c in self.console.clients.getClientsByLevel():
             pastbans = self.console.storage.query("""SELECT id FROM penalties WHERE (type = "tempban" OR type = "ban") AND client_id = "%s" """ % c.id)
-            names.append(self.getMessage('ultra_list', c.cid, c.name, c.id, c.maxLevel, c.connections, c.numWarnings, pastbans))
-
+            names.append(self.getMessage('ultra_list', c.cid, c.name, c.id, c.maxLevel, c.connections, c.numWarnings, pastbans.rowcount))
+                         
         for b in names:
             cmd.sayLoudOrPM(client,  b)
         return True
