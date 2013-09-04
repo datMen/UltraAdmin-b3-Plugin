@@ -75,36 +75,28 @@ class UltraadminPlugin(b3.plugin.Plugin):
 			self.onClientConnect(event.client)
 		elif event.type == b3.events.EVT_CLIENT_BAN_TEMP or event.type == b3.events.EVT_CLIENT_BAN:
 			self.tell_bans(event.client)
-            
+
     def get_all_player_bans(self,  client):
-        cursor1 = self.console.storage.query(
-        """SELECT id,name FROM clients ORDER BY id ASC""")
-        client_id = []
-        client_name = []
-        if cursor1.rowcount > 0:
-            while not cursor1.EOF:
-                r = cursor1.getRow()
-                client_id.append(r['id'])
-                client_name.append(r['name'])
-                cursor1.moveNext()
-        cursor1.close()
-        
-        cursor = self.console.storage.query(
-        """SELECT admin_id, reason, time_expire FROM penalties 
-        WHERE (TYPE =  "tempban" OR TYPE =  "ban") AND client_id = %s """%(client.id))
-        bans = []
-        if cursor.rowcount > 0:
-            while not cursor.EOF:
-                r = cursor.getRow()  
-                for n in range(len(client_id)):
-                    if r['admin_id'] == client_id[n]:
-                        admin_name = client_name[n]
-                    if r['admin_id'] == 0:
-                        admin_name = ":{(Per)}:"              
-                bans.append("by %s, reason: ^1%s ^7until ^3%s" %(admin_name,  r['reason'],  self.console.formatTime(r['time_expire'])))
-                cursor.moveNext()
-        cursor.close()
-        return bans
+                cursor = self.console.storage.query(
+		"""SELECT a.name, p.reason, p.time_expire  FROM penalties p, clients a
+		WHERE a.id = p.admin_id AND (p.type = "tempban" OR p.type = "ban") AND p.client_id = %s """ % client.id)
+		bans = []
+		if cursor.rowcount > 0:
+			while not cursor.EOF:
+				r = cursor.getRow()
+				bans.append("by ^3%s^7, reason: ^1%s ^7until ^3%s" %(r['name'],  r['reason'],  self.console.formatTime(r['time_expire'])))
+				cursor.moveNext()
+		cursor.close()
+                cursor = self.console.storage.query(
+		"""SELECT p.admin_id, p.reason, p.time_expire  FROM penalties p
+		WHERE (p.type = "tempban" OR p.type = "ban") AND p.admin_id = 0 AND p.client_id = %s """ % client.id)
+		if cursor.rowcount > 0:
+			while not cursor.EOF:
+				r = cursor.getRow()
+				bans.append("by ^3:^2{^7(Per)^5}^3:^7, reason: ^1%s ^7until ^3%s" %(r['reason'],  self.console.formatTime(r['time_expire'])))
+				cursor.moveNext()
+		cursor.close()
+		return bans
 	
     def tell_bans(self, client):
 		a = self._adminPlugin.getAdmins()
