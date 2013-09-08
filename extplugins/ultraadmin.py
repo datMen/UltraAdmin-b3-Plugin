@@ -75,28 +75,21 @@ class UltraadminPlugin(b3.plugin.Plugin):
 			self.onClientConnect(event.client)
 		elif event.type == b3.events.EVT_CLIENT_BAN_TEMP or event.type == b3.events.EVT_CLIENT_BAN:
 			self.tell_bans(event.client)
-
+            
     def get_all_player_bans(self,  client):
                 cursor = self.console.storage.query(
-		"""SELECT a.name, p.reason, p.time_expire  FROM penalties p, clients a
-		WHERE a.id = p.admin_id AND (p.type = "tempban" OR p.type = "ban") AND p.client_id = %s """ % client.id)
-		bans = []
-		if cursor.rowcount > 0:
-			while not cursor.EOF:
-				r = cursor.getRow()
-				bans.append("by ^3%s^7, reason: ^1%s ^7until ^3%s" %(r['name'],  r['reason'],  self.console.formatTime(r['time_expire'])))
-				cursor.moveNext()
-		cursor.close()
-                cursor = self.console.storage.query(
-		"""SELECT p.admin_id, p.reason, p.time_expire  FROM penalties p
-		WHERE (p.type = "tempban" OR p.type = "ban") AND p.admin_id = 0 AND p.client_id = %s """ % client.id)
-		if cursor.rowcount > 0:
-			while not cursor.EOF:
-				r = cursor.getRow()
-				bans.append("by ^3:^2{^7(Per)^5}^3:^7, reason: ^1%s ^7until ^3%s" %(r['reason'],  self.console.formatTime(r['time_expire'])))
-				cursor.moveNext()
-		cursor.close()
-		return bans
+                """SELECT COALESCE((SELECT DISTINCT clients.name FROM clients
+                WHERE clients.id =  penalties.admin_id),'^3:^2{(^7Per^5)}^3:^7' )AS name, reason, time_expire FROM  penalties 
+                INNER JOIN clients ON client_id = clients.id
+                WHERE (type =  "Ban" OR  type =  "Tempban") AND clients.id = %s """ %(client.id))
+                bans = []
+                if cursor.rowcount > 0:
+                        while not cursor.EOF:
+                                r = cursor.getRow()
+                                bans.append("by %s, reason: ^1%s ^7until ^3%s" %(r['name'],  r['reason'],  self.console.formatTime(r['time_expire'])))
+                                cursor.moveNext()
+                cursor.close()
+                return bans
 	
     def tell_bans(self, client):
 		a = self._adminPlugin.getAdmins()
@@ -456,3 +449,23 @@ class UltraadminPlugin(b3.plugin.Plugin):
         cmd.sayLoudOrPM(client, "^7Permbans: ^5%s" % permbans.rowcount)
         cmd.sayLoudOrPM(client, "^7Active Tempbans: ^5%s" % tempbans.rowcount)
         cmd.sayLoudOrPM(client, "^7Active Warnings: ^5%s" % warns.rowcount)
+
+    def cmd_ultraadmins(self, data, client=None, cmd=None):
+        """\
+        - list all online/offline admins in the server.
+        """
+		#Get SQL information
+        cursor = self.console.storage.query("""SELECT clients.id, COALESCE((SELECT DISTINCT aliases.alias FROM aliases WHERE aliases.client_id =  clients.id ORDER BY aliases.num_used DESC LIMIT 1), clients.name ) AS admin, level FROM clients, groups WHERE clients.group_bits = groups.id AND group_bits >2 ORDER BY group_bits DESC """)
+        admins = []
+        if cursor.rowcount > 0:
+                while not cursor.EOF:
+                        r = cursor.getRow()
+                        admin = r['admin']
+                        id = r['id']
+                        level = r['level']
+                        admins.append(self.getMessage('ultra_admins', r['admin'], r['id'], r['level']))
+                        cursor.moveNext()
+        cursor.close()
+        for b in admins:
+            cmd.sayLoudOrPM(client,  b)
+        return True
