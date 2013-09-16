@@ -10,6 +10,6 @@
     <set name="general_info">^7%s: %s^7 [^2@%s^7] is a  ^2%s^7 [^1%s^7], connected: ^6%s ^7times. ^4%s ^7from: %s</set>
     <set name="watchlist_info">^5Watchlist^7: Added by %s ^7for ^5%s</set>
     <set name="ultra_list">^7%s: %s ^2@%s ^3%s ^6%s ^1Wr: ^4%s ^1Pb:^4%s</set>
-    <set name="ultra_admins">^5%s^7 id: ^2@%s^7 level: [^1%s^7]</set>
+    <set name="ultra_admins">^4%s^7 id: ^2@%s^7 level: [^1%s^7]</set>
     </settings>
 </configuration>
