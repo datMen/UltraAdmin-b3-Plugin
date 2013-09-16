@@ -15,7 +15,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA	   02110-1301	 USA
 
-__version__ = '1.3'
+__version__ = '2.0'
 __author__  = 'LouK'
 
 import b3, re, threading, traceback, thread, datetime, time, random
