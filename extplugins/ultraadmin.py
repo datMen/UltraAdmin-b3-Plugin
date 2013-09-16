@@ -477,7 +477,7 @@ class UltraadminPlugin(b3.plugin.Plugin):
         """
         plugins = []
         for pname in self.console._pluginOrder:
-            plugins.append("^5%s ^7%s" % (pname, getattr(getModule(self.console.getPlugin(pname).__module__), '__version__', '__name__')))
+            plugins.append("^2%s ^7%s" % (pname, getattr(getModule(self.console.getPlugin(pname).__module__), '__version__', '__name__')))
         
         for b in plugins:
             cmd.sayLoudOrPM(client, b)
