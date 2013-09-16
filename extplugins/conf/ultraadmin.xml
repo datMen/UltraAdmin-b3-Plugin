@@ -1,8 +1,8 @@
 <configuration plugin="ultraadmin">
    <settings name="commands">
-      <set name="ultrauserinfo-uui">60</set>
-      <set name="ultralist-ul">40</set>
-     <set name="ultraserverinfo-usi">40</set>
+    <set name="ultrauserinfo-uui">60</set>
+    <set name="ultralist-ul">40</set>
+    <set name="ultraserverinfo-usi">40</set>
     <set name="ultrab3-ub3">40</set>
     <set name="ultraadmins-uadmins">40</set>
     <set name="listplugins-plugins">80</set>

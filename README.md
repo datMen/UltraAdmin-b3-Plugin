@@ -71,3 +71,9 @@ In order to use this plugin, you need to have some other's in your b3:
 - Permbans
 - Active Tempbans number
 - Active Warnings number
+
+#### !ultraadmins (!uadmins)
+> List all online/offline admins at b3 by levels.
+
+#### !listplugins (!plugins)
+> List all running plugins and their versions.
