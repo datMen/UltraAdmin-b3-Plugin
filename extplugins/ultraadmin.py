@@ -29,6 +29,7 @@ from b3.translator import translate
 from b3 import geoip
 from b3 import functions
 from b3 import clients
+from b3.functions import getModule
 #--------------------------------------------------------------------------------------------------
 class UltraadminPlugin(b3.plugin.Plugin):
     _adminPlugin = None
@@ -469,3 +470,16 @@ class UltraadminPlugin(b3.plugin.Plugin):
         for b in admins:
             cmd.sayLoudOrPM(client,  b)
         return True
+    
+    def cmd_listplugins(self, data, client=None, cmd=None):
+        """\
+        - list all installed plugins.
+        """
+        plugins = []
+        for pname in self.console._pluginOrder:
+            plugins.append("^5%s ^7%s" % (pname, getattr(getModule(self.console.getPlugin(pname).__module__), '__version__', '__name__')))
+        
+        for b in plugins:
+            cmd.sayLoudOrPM(client, b)
+        return True
+        
