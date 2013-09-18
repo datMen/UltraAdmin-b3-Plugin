@@ -312,9 +312,13 @@ class UltraadminPlugin(b3.plugin.Plugin):
         bans = self.get_all_player_bans(sclient)
         location = self.get_client_location(sclient)
         country = translate(self._country_format % location)
+        clients = self.console.clients.getClientsByLevel()
         cursor = self.console.storage.query(self._SELECT_QUERY % sclient.id)
 
         cmd.sayLoudOrPM(client, self.getMessage('general_info', sclient.cid, sclient.exactName, sclient.id, sclient.maxGroup.name, sclient.maxLevel, sclient.connections, sclient.ip, country))
+    
+        if sclient not in clients:
+            cmd.sayLoudOrPM(client, 'Last seen: %s' % self.console.formatTime(sclient.timeEdit))
 
         if cursor.rowcount > 0:
             r = cursor.getRow()
