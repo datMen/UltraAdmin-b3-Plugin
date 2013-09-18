@@ -410,8 +410,8 @@ class UltraadminPlugin(b3.plugin.Plugin):
         if gametype==9:
             gametype='Jump'
 
-        
         cmd.sayLoudOrPM(client, "^7Server: %s" % self.console.getCvar('sv_hostname').getString())
+        cmd.sayLoudOrPM(client, "^7IP: ^2%s^7:^5%s" % (self.console._publicIp, self.console._port))
         cmd.sayLoudOrPM(client, "^7Version: ^5%s" % self.console.getCvar('version').getString())
         cmd.sayLoudOrPM(client, "^7Public Slots: ^2%s" % self.console.getCvar('sv_maxclients').getString())
         cmd.sayLoudOrPM(client, "^7Private Slots: ^2%s" % self.console.getCvar('sv_privateClients').getString())
