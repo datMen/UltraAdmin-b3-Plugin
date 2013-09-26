@@ -470,16 +470,44 @@ class UltraadminPlugin(b3.plugin.Plugin):
         permbans = self.console.storage.query("""SELECT id FROM penalties WHERE type= 'ban' AND time_expire = '-1' """)
         warns = self.console.storage.query("""SELECT c.id, c.name, p.time_expire FROM penalties p, clients c  WHERE p.client_id = c.id AND p.inactive = 0 AND  type='Warning' AND p.time_expire >= UNIX_TIMESTAMP() """)
         tempbans = self.console.storage.query("""SELECT id FROM penalties WHERE type= 'tempban' AND inactive = 0 AND time_expire >= UNIX_TIMESTAMP() """)
-
-        cmd.sayLoudOrPM(client, '^7Version: ^1%s' % b3.version)
-        cmd.sayLoudOrPM(client, '^7Uptime: [^2%s^7]' % (functions.minutesStr(self.console.upTime() / 60.0)))
-        cmd.sayLoudOrPM(client, "^7Total Players: ^5%s" % players.rowcount)
-        cmd.sayLoudOrPM(client, "^7Admins: ^5%s" % total_admins.rowcount)
-        cmd.sayLoudOrPM(client, "^7Regulars: ^5%s" % total_regulars.rowcount)
-        cmd.sayLoudOrPM(client, "^7Players in Watchlist: ^5%s" % follow.rowcount)
-        cmd.sayLoudOrPM(client, "^7Permbans: ^5%s" % permbans.rowcount)
-        cmd.sayLoudOrPM(client, "^7Active Tempbans: ^5%s" % tempbans.rowcount)
-        cmd.sayLoudOrPM(client, "^7Active Warnings: ^5%s" % warns.rowcount)
+        uptime = functions.minutesStr(self.console.upTime() / 60.0)
+        
+        if  data is None or data=='':
+            cmd.sayLoudOrPM(client, '^7Version: ^1%s' % b3.version)
+            cmd.sayLoudOrPM(client, '^7Uptime: [^2%s^7]' % uptime)
+            cmd.sayLoudOrPM(client, "^7Total Players: ^5%s" % players.rowcount)
+            cmd.sayLoudOrPM(client, "^7Admins: ^5%s" % total_admins.rowcount)
+            cmd.sayLoudOrPM(client, "^7Regulars: ^5%s" % total_regulars.rowcount)
+            cmd.sayLoudOrPM(client, "^7Players in Watchlist: ^5%s" % follow.rowcount)
+            cmd.sayLoudOrPM(client, "^7Permbans: ^5%s" % permbans.rowcount)
+            cmd.sayLoudOrPM(client, "^7Active Tempbans: ^5%s" % tempbans.rowcount)
+            cmd.sayLoudOrPM(client, "^7Active Warnings: ^5%s" % warns.rowcount)
+            return False
+        else:
+            input = self._adminPlugin.parseUserCmd(data)
+            variable = input[0]
+            if (variable == "b3version") or (variable == "version"):
+                cmd.sayLoudOrPM(client, '^7Version: ^1%s' % b3.version)
+            elif (variable == "b3uptime") or (variable == "uptime"):
+                cmd.sayLoudOrPM(client, '^7Uptime: [^2%s^7]' % uptime)
+            elif (variable == "b3players") or (variable == "players") or (variable == "allplayers") or (variable == "totalplayers"):
+                cmd.sayLoudOrPM(client, "^7Total Players: ^5%s" % players.rowcount)
+            elif (variable == "b3admins") or (variable == "admins"):
+                cmd.sayLoudOrPM(client, "^7Admins: ^5%s" % total_admins.rowcount)
+            elif (variable == "b3regulars") or (variable == "regulars") or (variable == "regs"):
+                cmd.sayLoudOrPM(client, "^7Regulars: ^5%s" % total_regulars.rowcount)
+            elif (variable == "watchlist") or (variable == "follow") or (variable == "following") or (variable == "b3watchlist"):
+                cmd.sayLoudOrPM(client, "^7Players in Watchlist: ^5%s" % follow.rowcount)
+            elif (variable == "permbans") or (variable == "totalbans") or (variable == "bans") or (variable == "pbans"):
+                cmd.sayLoudOrPM(client, "^7Permbans: ^5%s" % permbans.rowcount)
+            elif (variable == "tempbans") or (variable == "tbans") or (variable == "totaltempbans"):
+                cmd.sayLoudOrPM(client, "^7Active Tempbans: ^5%s" % tempbans.rowcount)
+            elif (variable == "currentmap") or (variable == "map"):
+                cmd.sayLoudOrPM(client, "^7Current map: ^2%s" % self.console.getCvar('mapname').getString())
+            elif (variable == "warns") or (variable == "warnings")  or (variable == "activewarnings"):
+                cmd.sayLoudOrPM(client, "^7Active Warnings: ^5%s" % warns.rowcount)
+            else:
+                client.message("Couldn't find your request")
 
     def cmd_ultraadmins(self, data, client=None, cmd=None):
         """\
