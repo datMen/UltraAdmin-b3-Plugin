@@ -397,7 +397,6 @@ class UltraadminPlugin(b3.plugin.Plugin):
             
         #Get server information
         gametype = self.console.getCvar('g_gametype').getInt()
-        mapname = self.console.getNextMap()
         
         if gametype==0:
             gametype='FFA'
@@ -414,16 +413,43 @@ class UltraadminPlugin(b3.plugin.Plugin):
         if gametype==9:
             gametype='Jump'
 
-        cmd.sayLoudOrPM(client, "^7Server: %s" % self.console.getCvar('sv_hostname').getString())
-        cmd.sayLoudOrPM(client, "^7IP: ^2%s^7:^5%s" % (self.console._publicIp, self.console._port))
-        cmd.sayLoudOrPM(client, "^7Version: ^5%s" % self.console.getCvar('version').getString())
-        cmd.sayLoudOrPM(client, "^7Public Slots: ^2%s" % self.console.getCvar('sv_maxclients').getString())
-        cmd.sayLoudOrPM(client, "^7Private Slots: ^2%s" % self.console.getCvar('sv_privateClients').getString())
-        cmd.sayLoudOrPM(client, "^7Gametype: ^5%s" % gametype)
-        cmd.sayLoudOrPM(client, "^7Timelimit: ^2%s" % self.console.getCvar('timelimit').getString())
-        cmd.sayLoudOrPM(client, "^7Fraglimit: ^2%s" % self.console.getCvar('fraglimit').getString())
-        cmd.sayLoudOrPM(client, "^7Current map: ^2%s" % self.console.getCvar('mapname').getString())
-        cmd.sayLoudOrPM(client, "^7Next Map: ^2%s" % mapname)
+        if  data is None or data=='':
+            cmd.sayLoudOrPM(client, "^7Server: %s" % self.console.getCvar('sv_hostname').getString())
+            cmd.sayLoudOrPM(client, "^7IP: ^2%s^7:^5%s" % (self.console._publicIp, self.console._port))
+            cmd.sayLoudOrPM(client, "^7Version: ^5%s" % self.console.getCvar('version').getString())
+            cmd.sayLoudOrPM(client, "^7Public Slots: ^2%s" % self.console.getCvar('sv_maxclients').getString())
+            cmd.sayLoudOrPM(client, "^7Private Slots: ^2%s" % self.console.getCvar('sv_privateClients').getString())
+            cmd.sayLoudOrPM(client, "^7Gametype: ^5%s" % gametype)
+            cmd.sayLoudOrPM(client, "^7Timelimit: ^2%s" % self.console.getCvar('timelimit').getString())
+            cmd.sayLoudOrPM(client, "^7Fraglimit: ^2%s" % self.console.getCvar('fraglimit').getString())
+            cmd.sayLoudOrPM(client, "^7Current map: ^2%s" % self.console.getCvar('mapname').getString())
+            cmd.sayLoudOrPM(client, "^7Next Map: ^2%s" % self.console.getNextMap())
+            return False
+        else:
+            input = self._adminPlugin.parseUserCmd(data)
+            variable = input[0]
+            if (variable == "servername") or (variable == "server"):
+                cmd.sayLoudOrPM(client, "^7Server: %s" % self.console.getCvar('sv_hostname').getString())
+            elif (variable == "serverip") or (variable == "ip"):
+                cmd.sayLoudOrPM(client, "^7IP: ^2%s^7:^5%s" % (self.console._publicIp, self.console._port))
+            elif (variable == "serverversion") or (variable == "version"):
+                cmd.sayLoudOrPM(client, "^7Version: ^5%s" % self.console.getCvar('version').getString())
+            elif (variable == "publicslots") or (variable == "pubslots"):
+                cmd.sayLoudOrPM(client, "^7Public Slots: ^2%s" % self.console.getCvar('sv_maxclients').getString())
+            elif (variable == "privateslots") or (variable == "privslots"):
+                cmd.sayLoudOrPM(client, "^7Private Slots: ^2%s" % self.console.getCvar('sv_privateClients').getString())
+            elif (variable == "gametype") or (variable == "gt"):
+                cmd.sayLoudOrPM(client, "^7Gametype: ^5%s" % gametype)
+            elif (variable == "timelimit") or (variable == "tlimit"):
+                cmd.sayLoudOrPM(client, "^7Timelimit: ^2%s" % self.console.getCvar('timelimit').getString())
+            elif (variable == "fraglimit") or (variable == "flimit"):
+                cmd.sayLoudOrPM(client, "^7Fraglimit: ^2%s" % self.console.getCvar('fraglimit').getString())
+            elif (variable == "currentmap") or (variable == "map"):
+                cmd.sayLoudOrPM(client, "^7Current map: ^2%s" % self.console.getCvar('mapname').getString())
+            elif (variable == "nextmap") or (variable == "nm"):
+                cmd.sayLoudOrPM(client, "^7Next Map: ^2%s" % self.console.getNextMap())
+            else:
+                client.message("Couldn't find your request")
         
     def cmd_ultrab3(self, data, client=None, cmd=None):
         """\
