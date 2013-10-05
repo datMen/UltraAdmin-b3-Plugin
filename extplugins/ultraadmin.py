@@ -80,7 +80,7 @@ class UltraadminPlugin(b3.plugin.Plugin):
     def get_all_player_bans(self,  client):
                 cursor = self.console.storage.query(
                 """SELECT COALESCE((SELECT DISTINCT clients.name FROM clients
-                WHERE clients.id =  penalties.admin_id),'^3:^2{(^7Per^5)}^3:^7' )AS name, reason, time_expire FROM  penalties 
+                WHERE clients.id =  penalties.admin_id),'^2Auto-Ban^7' )AS name, reason, time_expire FROM  penalties 
                 INNER JOIN clients ON client_id = clients.id
                 WHERE (type =  "Ban" OR  type =  "Tempban") AND clients.id = %s """ %(client.id))
                 bans = []
@@ -295,27 +295,30 @@ class UltraadminPlugin(b3.plugin.Plugin):
         """
 
         if not self.console.storage.status():
-			cmd.sayLoudOrPM(client, '^7Cannot lookup, database apears to be ^1DOWN')
-			return False		
-		
+            cmd.sayLoudOrPM(client, '^7Cannot lookup, database apears to be ^1DOWN')
+            return False		
+
         m = self._adminPlugin.parseUserCmd(data)
         if not m:
-			client.message('^7correct syntax is ^2!ultrauserinfo ^7<name>')
-			return False
-	
+            client.message('^7correct syntax is ^2!ultrauserinfo ^7<name>')
+            return False
+
         cid = m[0]
         sclient = self._adminPlugin.findClientPrompt(cid, client)
         if not sclient:
-			return
+            client.message('^7correct syntax is ^2!ultrauserinfo ^7<name>')
+            return
 
         self._country_format = '^1%(city)s ^7[^3%(country_name)s^7]'
         bans = self.get_all_player_bans(sclient)
         location = self.get_client_location(sclient)
-        country = translate(self._country_format % location)
         clients = self.console.clients.getClientsByLevel()
         cursor = self.console.storage.query(self._SELECT_QUERY % sclient.id)
-
-        cmd.sayLoudOrPM(client, self.getMessage('general_info', sclient.cid, sclient.exactName, sclient.id, sclient.maxGroup.name, sclient.maxLevel, sclient.connections, sclient.ip, country))
+        if location:
+            country = translate(self._country_format % location)
+            cmd.sayLoudOrPM(client, self.getMessage('general_info', sclient.cid, sclient.exactName, sclient.id, sclient.maxGroup.name, sclient.maxLevel, sclient.connections, sclient.ip, country))
+        else:
+            cmd.sayLoudOrPM(client, '^7%s: %s^7 [^2@%s^7] is a  ^2%s^7 [^1%s^7], connected: ^6%s ^7times. ^4%s ^7from: %s' % (sclient.cid, sclient.exactName, sclient.id, sclient.maxGroup.name, sclient.maxLevel, sclient.connections, sclient.ip))
     
         if sclient not in clients:
             cmd.sayLoudOrPM(client, 'Last seen: %s' % self.console.formatTime(sclient.timeEdit))
@@ -355,19 +358,16 @@ class UltraadminPlugin(b3.plugin.Plugin):
                 if warn:
                     expire = functions.minutesStr((warn.timeExpire - (self.console.time())) / 60)
                     msg = '^7. expires in ^5%s' % expire
-
                 warn = sclient.lastWarning
                 if warn:
                     msg += '^7: ^3%s' % warn.reason
-
                 message = '^1Warnings^7: ^4%s %s' % (warns, msg)
             else:
                 message = ''
-
+                
             cmd.sayLoudOrPM(client, message)
 
         if len(bans) == 0:
-            cmd.sayLoudOrPM(client, "")
             return True
 
         cmd.sayLoudOrPM(client, "^1Past Bans^7: ^4%s"  % len(bans))
@@ -461,7 +461,7 @@ class UltraadminPlugin(b3.plugin.Plugin):
             cmd.sayLoudOrPM(client, '^7Cannot lookup, database apears to be ^1DOWN')
             return False
             
-		#Get SQL information
+        #Get SQL information
         players = self.console.storage.query("""SELECT * FROM clients """)
         total_admins = self.console.storage.query("""SELECT id FROM clients WHERE (group_bits='32' OR group_bits='256' OR group_bits='4096' OR group_bits='65536' OR group_bits='2097152') """)
         total_regulars = self.console.storage.query("""SELECT id FROM clients WHERE group_bits='2' """)
@@ -513,7 +513,7 @@ class UltraadminPlugin(b3.plugin.Plugin):
         """\
         - list all online/offline admins in the server.
         """
-		#Get SQL information
+        #Get SQL information
         cursor = self.console.storage.query("""SELECT clients.id, COALESCE((SELECT DISTINCT aliases.alias FROM aliases WHERE aliases.client_id =  clients.id ORDER BY aliases.num_used DESC LIMIT 1), clients.name ) AS admin, level FROM clients, groups WHERE clients.group_bits = groups.id AND group_bits >2 ORDER BY group_bits DESC """)
         admins = []
         if cursor.rowcount > 0:
