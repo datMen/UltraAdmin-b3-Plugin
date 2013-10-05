@@ -297,13 +297,13 @@ class UltraadminPlugin(b3.plugin.Plugin):
         if not self.console.storage.status():
             cmd.sayLoudOrPM(client, '^7Cannot lookup, database apears to be ^1DOWN')
             return False		
-
-        m = self._adminPlugin.parseUserCmd(data)
+        input = self._adminPlugin.parseUserCmd(data)
+        input = data.split(' ',1)
         if not m:
             client.message('^7correct syntax is ^2!ultrauserinfo ^7<name>')
             return False
-
-        cid = m[0]
+        
+        cid = input[0]
         sclient = self._adminPlugin.findClientPrompt(cid, client)
         if not sclient:
             client.message('^7correct syntax is ^2!ultrauserinfo ^7<name>')
