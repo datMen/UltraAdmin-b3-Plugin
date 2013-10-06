@@ -392,7 +392,7 @@ class UltraadminPlugin(b3.plugin.Plugin):
         
     def cmd_ultraserverinfo(self, data, client=None, cmd=None):
         """\
-        - list ultra information about the server.
+        or <variable> - list ultra information about the server.
         """
             
         #Get server information
@@ -453,7 +453,7 @@ class UltraadminPlugin(b3.plugin.Plugin):
         
     def cmd_ultrab3(self, data, client=None, cmd=None):
         """\
-        - list ultra information about the server.
+        or <variable> - list ultra information about the server.
         """
         
         
@@ -472,7 +472,7 @@ class UltraadminPlugin(b3.plugin.Plugin):
         tempbans = self.console.storage.query("""SELECT id FROM penalties WHERE type= 'tempban' AND inactive = 0 AND time_expire >= UNIX_TIMESTAMP() """)
         uptime = functions.minutesStr(self.console.upTime() / 60.0)
         
-        if  data is None or data=='':
+        if data is None or data=='':
             cmd.sayLoudOrPM(client, '^7Version: ^1%s' % b3.version)
             cmd.sayLoudOrPM(client, '^7Uptime: [^2%s^7]' % uptime)
             cmd.sayLoudOrPM(client, "^7Total Players: ^5%s" % players.rowcount)
@@ -511,23 +511,230 @@ class UltraadminPlugin(b3.plugin.Plugin):
 
     def cmd_ultraadmins(self, data, client=None, cmd=None):
         """\
-        - list all online/offline admins in the server.
+        or <level> - list all online/offline admins in the server.
         """
-        #Get SQL information
-        cursor = self.console.storage.query("""SELECT clients.id, COALESCE((SELECT DISTINCT aliases.alias FROM aliases WHERE aliases.client_id =  clients.id ORDER BY aliases.num_used DESC LIMIT 1), clients.name ) AS admin, level FROM clients, groups WHERE clients.group_bits = groups.id AND group_bits >2 ORDER BY group_bits DESC """)
-        admins = []
-        if cursor.rowcount > 0:
+        input = self._adminPlugin.parseUserCmd(data)
+        
+        if not data:
+            level = 20
+            cursor = self.console.storage.query("""SELECT clients.id, COALESCE((SELECT DISTINCT aliases.alias FROM aliases WHERE aliases.client_id =  clients.id ORDER BY aliases.num_used DESC LIMIT 1), clients.name ) AS admin, level FROM clients, groups WHERE clients.group_bits = groups.id AND level >= %s ORDER BY group_bits DESC """ % level)
+            admins = []
+            if cursor.rowcount > 0:
                 while not cursor.EOF:
+                    r = cursor.getRow()
+                    admin = r['admin']
+                    id = r['id']
+                    level = r['level']
+                    admins.append(self.getMessage('ultra_admins', r['admin'], r['id'], r['level']))
+                    cursor.moveNext()
+            cursor.close()
+            for b in admins:
+                cmd.sayLoudOrPM(client,  b)
+            return False
+        else:
+            variable = input[0]
+            if (variable == "100") or (variable == "superadmin") or (variable == "superadmins"):
+                level = 100
+                cursor = self.console.storage.query("""SELECT clients.id, COALESCE((SELECT DISTINCT aliases.alias FROM aliases WHERE aliases.client_id =  clients.id ORDER BY aliases.num_used DESC LIMIT 1), clients.name ) AS admin, level FROM clients, groups WHERE clients.group_bits = groups.id AND level = %s ORDER BY group_bits DESC """ % level)
+                admins = []
+                if cursor.rowcount > 0:
+                    while not cursor.EOF:
                         r = cursor.getRow()
                         admin = r['admin']
                         id = r['id']
                         level = r['level']
                         admins.append(self.getMessage('ultra_admins', r['admin'], r['id'], r['level']))
                         cursor.moveNext()
-        cursor.close()
-        for b in admins:
-            cmd.sayLoudOrPM(client,  b)
-        return True
+                cursor.close()
+                for b in admins:
+                    cmd.sayLoudOrPM(client,  b)
+                return False
+            elif (variable == "90") or (variable == "cofounders") or (variable == "headadmins"):
+                level = 90
+                cursor = self.console.storage.query("""SELECT clients.id, COALESCE((SELECT DISTINCT aliases.alias FROM aliases WHERE aliases.client_id =  clients.id ORDER BY aliases.num_used DESC LIMIT 1), clients.name ) AS admin, level FROM clients, groups WHERE clients.group_bits = groups.id AND level = %s ORDER BY group_bits DESC """ % level)
+                admins = []
+                if cursor.rowcount > 0:
+                    while not cursor.EOF:
+                        r = cursor.getRow()
+                        admin = r['admin']
+                        id = r['id']
+                        level = r['level']
+                        admins.append(self.getMessage('ultra_admins', r['admin'], r['id'], r['level']))
+                        cursor.moveNext()
+                cursor.close()
+                for b in admins:
+                    cmd.sayLoudOrPM(client,  b)
+                return False
+            elif (variable == "80") or (variable == "senioradmin") or (variable == "senioradmins"):
+                level = 80
+                cursor = self.console.storage.query("""SELECT clients.id, COALESCE((SELECT DISTINCT aliases.alias FROM aliases WHERE aliases.client_id =  clients.id ORDER BY aliases.num_used DESC LIMIT 1), clients.name ) AS admin, level FROM clients, groups WHERE clients.group_bits = groups.id AND level = %s ORDER BY group_bits DESC """ % level)
+                admins = []
+                if cursor.rowcount > 0:
+                    while not cursor.EOF:
+                        r = cursor.getRow()
+                        admin = r['admin']
+                        id = r['id']
+                        level = r['level']
+                        admins.append(self.getMessage('ultra_admins', r['admin'], r['id'], r['level']))
+                        cursor.moveNext()
+                cursor.close()
+                for b in admins:
+                    cmd.sayLoudOrPM(client,  b)
+                return False
+            elif (variable == "60") or (variable == "fulladmin") or (variable == "fulladmins"):
+                level = 60
+                cursor = self.console.storage.query("""SELECT clients.id, COALESCE((SELECT DISTINCT aliases.alias FROM aliases WHERE aliases.client_id =  clients.id ORDER BY aliases.num_used DESC LIMIT 1), clients.name ) AS admin, level FROM clients, groups WHERE clients.group_bits = groups.id AND level = %s ORDER BY group_bits DESC """ % level)
+                admins = []
+                if cursor.rowcount > 0:
+                    while not cursor.EOF:
+                        r = cursor.getRow()
+                        admin = r['admin']
+                        id = r['id']
+                        level = r['level']
+                        admins.append(self.getMessage('ultra_admins', r['admin'], r['id'], r['level']))
+                        cursor.moveNext()
+                cursor.close()
+                for b in admins:
+                    cmd.sayLoudOrPM(client,  b)
+                return False
+            elif (variable == "40") or (variable == "admins") or (variable == "admin"):
+                level = 40
+                cursor = self.console.storage.query("""SELECT clients.id, COALESCE((SELECT DISTINCT aliases.alias FROM aliases WHERE aliases.client_id =  clients.id ORDER BY aliases.num_used DESC LIMIT 1), clients.name ) AS admin, level FROM clients, groups WHERE clients.group_bits = groups.id AND level = %s ORDER BY group_bits DESC """ % level)
+                admins = []
+                if cursor.rowcount > 0:
+                    while not cursor.EOF:
+                        r = cursor.getRow()
+                        admin = r['admin']
+                        id = r['id']
+                        level = r['level']
+                        admins.append(self.getMessage('ultra_admins', r['admin'], r['id'], r['level']))
+                        cursor.moveNext()
+                cursor.close()
+                for b in admins:
+                    cmd.sayLoudOrPM(client,  b)
+                return False
+            elif (variable == "20") or (variable == "mod") or (variable == "moderators"):
+                level = 20
+                cursor = self.console.storage.query("""SELECT clients.id, COALESCE((SELECT DISTINCT aliases.alias FROM aliases WHERE aliases.client_id =  clients.id ORDER BY aliases.num_used DESC LIMIT 1), clients.name ) AS admin, level FROM clients, groups WHERE clients.group_bits = groups.id AND level = %s ORDER BY group_bits DESC """ % level)
+                admins = []
+                if cursor.rowcount > 0:
+                    while not cursor.EOF:
+                        r = cursor.getRow()
+                        admin = r['admin']
+                        id = r['id']
+                        level = r['level']
+                        admins.append(self.getMessage('ultra_admins', r['admin'], r['id'], r['level']))
+                        cursor.moveNext()
+                cursor.close()
+                for b in admins:
+                    cmd.sayLoudOrPM(client,  b)
+                return False
+            elif (variable == "15") or (variable == "member") or (variable == "members"):
+                level = 15
+                cursor = self.console.storage.query("""SELECT clients.id, COALESCE((SELECT DISTINCT aliases.alias FROM aliases WHERE aliases.client_id =  clients.id ORDER BY aliases.num_used DESC LIMIT 1), clients.name ) AS admin, level FROM clients, groups WHERE clients.group_bits = groups.id AND level = %s ORDER BY group_bits DESC """ % level)
+                admins = []
+                if cursor.rowcount > 0:
+                    while not cursor.EOF:
+                        r = cursor.getRow()
+                        admin = r['admin']
+                        id = r['id']
+                        level = r['level']
+                        admins.append(self.getMessage('ultra_admins', r['admin'], r['id'], r['level']))
+                        cursor.moveNext()
+                cursor.close()
+                for b in admins:
+                    cmd.sayLoudOrPM(client,  b)
+                return False
+            elif (variable == "10") or (variable == "recruit") or (variable == "recruits"):
+                level = 10
+                cursor = self.console.storage.query("""SELECT clients.id, COALESCE((SELECT DISTINCT aliases.alias FROM aliases WHERE aliases.client_id =  clients.id ORDER BY aliases.num_used DESC LIMIT 1), clients.name ) AS admin, level FROM clients, groups WHERE clients.group_bits = groups.id AND level = %s ORDER BY group_bits DESC """ % level)
+                admins = []
+                if cursor.rowcount > 0:
+                    while not cursor.EOF:
+                        r = cursor.getRow()
+                        admin = r['admin']
+                        id = r['id']
+                        level = r['level']
+                        admins.append(self.getMessage('ultra_admins', r['admin'], r['id'], r['level']))
+                        cursor.moveNext()
+                cursor.close()
+                for b in admins:
+                    cmd.sayLoudOrPM(client,  b)
+                return False
+            elif (variable == "5") or (variable == "premium") or (variable == "premiums"):
+                level = 5
+                cursor = self.console.storage.query("""SELECT clients.id, COALESCE((SELECT DISTINCT aliases.alias FROM aliases WHERE aliases.client_id =  clients.id ORDER BY aliases.num_used DESC LIMIT 1), clients.name ) AS admin, level FROM clients, groups WHERE clients.group_bits = groups.id AND level = %s ORDER BY group_bits DESC """ % level)
+                admins = []
+                if cursor.rowcount > 0:
+                    while not cursor.EOF:
+                        r = cursor.getRow()
+                        admin = r['admin']
+                        id = r['id']
+                        level = r['level']
+                        admins.append(self.getMessage('ultra_admins', r['admin'], r['id'], r['level']))
+                        cursor.moveNext()
+                cursor.close()
+                for b in admins:
+                    cmd.sayLoudOrPM(client,  b)
+                return False
+            elif (variable == "2") or (variable == "reg") or (variable == "regulars"):
+                level = 2
+                cursor = self.console.storage.query("""SELECT clients.id, COALESCE((SELECT DISTINCT aliases.alias FROM aliases WHERE aliases.client_id =  clients.id ORDER BY aliases.num_used DESC LIMIT 1), clients.name ) AS admin, level FROM clients, groups WHERE clients.group_bits = groups.id AND level = %s ORDER BY group_bits DESC """ % level)
+                admins = []
+                if cursor.rowcount > 0:
+                    while not cursor.EOF:
+                        r = cursor.getRow()
+                        admin = r['admin']
+                        id = r['id']
+                        level = r['level']
+                        admins.append(self.getMessage('ultra_admins', r['admin'], r['id'], r['level']))
+                        cursor.moveNext()
+                cursor.close()
+                for b in admins:
+                    cmd.sayLoudOrPM(client,  b)
+                return False
+            elif (variable == "1") or (variable == "user") or (variable == "users"):
+                if client.maxLevel < 100:
+                    client.message('Only superadmins can see all users')
+                    return False
+                else:
+                    level = 1
+                    cursor = self.console.storage.query("""SELECT clients.id, COALESCE((SELECT DISTINCT aliases.alias FROM aliases WHERE aliases.client_id =  clients.id ORDER BY aliases.num_used DESC LIMIT 1), clients.name ) AS admin, level FROM clients, groups WHERE clients.group_bits = groups.id AND level = %s ORDER BY group_bits DESC """ % level)
+                    admins = []
+                    if cursor.rowcount > 0:
+                        while not cursor.EOF:
+                            r = cursor.getRow()
+                            admin = r['admin']
+                            id = r['id']
+                            level = r['level']
+                            admins.append(self.getMessage('ultra_admins', r['admin'], r['id'], r['level']))
+                            cursor.moveNext()
+                    cursor.close()
+                    for b in admins:
+                        cmd.sayLoudOrPM(client,  b)
+                    return False
+            elif (variable == "0") or (variable == "guest") or (variable == "guests"):
+                if client.maxLevel < 100:
+                    client.message('Only superadmins can see all guests')
+                    return False
+                else:
+                    level = 0
+                    cursor = self.console.storage.query("""SELECT clients.id, COALESCE((SELECT DISTINCT aliases.alias FROM aliases WHERE aliases.client_id =  clients.id ORDER BY aliases.num_used DESC LIMIT 1), clients.name ) AS admin, level FROM clients, groups WHERE clients.group_bits = groups.id AND level = %s ORDER BY group_bits DESC """ % level)
+                    admins = []
+                    if cursor.rowcount > 0:
+                        while not cursor.EOF:
+                            r = cursor.getRow()
+                            admin = r['admin']
+                            id = r['id']
+                            level = r['level']
+                            admins.append(self.getMessage('ultra_admins', r['admin'], r['id'], r['level']))
+                            cursor.moveNext()
+                    cursor.close()
+                    for b in admins:
+                        cmd.sayLoudOrPM(client,  b)
+                    return False
+            else:
+                client.message("Couldn't find your request")
     
     def cmd_listplugins(self, data, client=None, cmd=None):
         """\
