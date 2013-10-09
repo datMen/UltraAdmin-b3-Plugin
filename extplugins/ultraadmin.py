@@ -299,7 +299,7 @@ class UltraadminPlugin(b3.plugin.Plugin):
             return False		
         input = self._adminPlugin.parseUserCmd(data)
         input = data.split(' ',1)
-        if not m:
+        if not input:
             client.message('^7correct syntax is ^2!ultrauserinfo ^7<name>')
             return False
         
