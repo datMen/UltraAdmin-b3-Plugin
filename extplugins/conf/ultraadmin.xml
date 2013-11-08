@@ -6,6 +6,8 @@
     <set name="ultrab3-ub3">40</set>
     <set name="ultraadmins-uadmins">40</set>
     <set name="listplugins-plugins">80</set>
+    <set name="unmaskall-uunmask">100</set>
+    <set name="checkmasked-cmasked">90</set>
    </settings>
    <settings name="messages">
     <set name="general_info">^7%s: %s^7 [^2@%s^7] is a  ^2%s^7 [^1%s^7], connected: ^6%s ^7times. ^4%s ^7from: %s</set>

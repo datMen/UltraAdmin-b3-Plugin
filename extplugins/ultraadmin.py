@@ -747,4 +747,34 @@ class UltraadminPlugin(b3.plugin.Plugin):
         for b in plugins:
             cmd.sayLoudOrPM(client, b)
         return True
+    
+    def cmd_unmaskall(self, data, client=None, cmd=None):
+        """\
+        - unmask all players in the server.
+        """
+        for c in self.console.clients.getClientsByLevel():
+            if c.maskLevel > 0:
+                c.maskLevel = 0
+                c._maskGroup = None
+                c.save()
         
+        client.message('You unmasked all clients in the server')
+        
+    def cmd_checkmasked(self, data, client, cmd=None):
+        """\
+        - check masked players in the server.
+        """
+        thread.start_new_thread(self.doCheckMaskList, (client, cmd))
+
+    def doCheckMaskList(self, client, cmd):
+        names = []
+        for c in self.console.clients.getClientsByLevel():
+            if c.maskLevel > 0:
+                names.append('%s Mask level: ^2%s' % (c.exactName, c.maskGroup.name))
+         
+        if len(names) == 0:
+            client.message('There are no masked players in the server') 
+        else:
+            for b in names:
+                cmd.sayLoudOrPM(client,  b)
+            return True
