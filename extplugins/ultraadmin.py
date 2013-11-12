@@ -71,34 +71,34 @@ class UltraadminPlugin(b3.plugin.Plugin):
       self.debug('Started')
 
     def onEvent(self,  event):
-		if event.type == b3.events.EVT_CLIENT_AUTH:
-			self.tell_notices(event.client)
-			self.onClientConnect(event.client)
-		elif event.type == b3.events.EVT_CLIENT_BAN_TEMP or event.type == b3.events.EVT_CLIENT_BAN:
-			self.tell_bans(event.client)
+        if event.type == b3.events.EVT_CLIENT_AUTH:
+            self.tell_notices(event.client)
+            self.onClientConnect(event.client)
+        elif event.type == b3.events.EVT_CLIENT_BAN_TEMP or event.type == b3.events.EVT_CLIENT_BAN:
+            self.tell_bans(event.client)
             
     def get_all_player_bans(self,  client):
-                cursor = self.console.storage.query(
-                """SELECT COALESCE((SELECT DISTINCT clients.name FROM clients
-                WHERE clients.id =  penalties.admin_id),'^2Auto-Ban^7' )AS name, reason, time_expire FROM  penalties 
-                INNER JOIN clients ON client_id = clients.id
-                WHERE (type =  "Ban" OR  type =  "Tempban") AND clients.id = %s """ %(client.id))
-                bans = []
-                if cursor.rowcount > 0:
-                        while not cursor.EOF:
-                                r = cursor.getRow()
-                                bans.append("by %s, reason: ^1%s ^7until ^3%s" %(r['name'],  r['reason'],  self.console.formatTime(r['time_expire'])))
-                                cursor.moveNext()
-                cursor.close()
-                return bans
-	
-    def tell_bans(self, client):
-		a = self._adminPlugin.getAdmins()
-		bans = self.get_all_player_bans(client)
+        cursor = self.console.storage.query(
+        """SELECT COALESCE((SELECT DISTINCT clients.name FROM clients
+        WHERE clients.id =  penalties.admin_id),'^2Auto-Ban^7' )AS name, reason, time_expire FROM  penalties 
+        INNER JOIN clients ON client_id = clients.id
+        WHERE (type =  "Ban" OR  type =  "Tempban") AND clients.id = %s """ %(client.id))
+        bans = []
+        if cursor.rowcount > 0:
+            while not cursor.EOF:
+                r = cursor.getRow()
+                bans.append("by %s, reason: ^1%s ^7until ^3%s" %(r['name'],  r['reason'],  self.console.formatTime(r['time_expire'])))
+                cursor.moveNext()
+        cursor.close()
+        return bans
 
-		if len(a) > 0 and len(bans) > 0:
-			for adm in a:
-				adm.message("^7%s has ^4%s ^7past bans"  %(client.name,  len(bans)))
+    def tell_bans(self, client):
+        a = self._adminPlugin.getAdmins()
+        bans = self.get_all_player_bans(client)
+
+        if len(a) > 0 and len(bans) > 0:
+            for adm in a:
+                adm.message("^7%s has ^4%s ^7past bans"  %(client.name,  len(bans)))
 
     def penalizeClient(self, type, client, reason, keyword=None, duration=0, admin=None, data=''):
         if reason == None:
@@ -221,7 +221,7 @@ class UltraadminPlugin(b3.plugin.Plugin):
                 msg = '^3peeing ^7in the gene pool'
 
             sclient.tempban(self.config.getTextTemplate('warn', 'reason', reason=msg), keyword, duration, client, False, data)
-	
+
     def getReason(self, reason):
         if not reason:
             return ''
@@ -399,15 +399,15 @@ class UltraadminPlugin(b3.plugin.Plugin):
         gametype = self.console.getCvar('g_gametype').getInt()
         
         if gametype==0:
-            gametype='FFA'
+            gametype='Free For All'
         if gametype==1:
-            gametype='LMS'
+            gametype='Last Man Standing'
         if gametype==3:
-            gametype='TDM'
+            gametype='Team Death Match'
         if gametype==4:
-            gametype='TS'
+            gametype='Team Survivor'
         if gametype==7:
-            gametype='CTF'
+            gametype='Capture The Flag'
         if gametype==8:
             gametype='Bomb'
         if gametype==9:
