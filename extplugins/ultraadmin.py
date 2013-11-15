@@ -326,19 +326,6 @@ class UltraadminPlugin(b3.plugin.Plugin):
         if not data:
             level = 20
             cursor = self.console.storage.query("""SELECT clients.id, COALESCE((SELECT DISTINCT aliases.alias FROM aliases WHERE aliases.client_id =  clients.id ORDER BY aliases.num_used DESC LIMIT 1), clients.name ) AS admin, level FROM clients, groups WHERE clients.group_bits = groups.id AND level >= %s ORDER BY group_bits DESC """ % level)
-            admins = []
-            if cursor.rowcount > 0:
-                while not cursor.EOF:
-                    r = cursor.getRow()
-                    admin = r['admin']
-                    id = r['id']
-                    level = r['level']
-                    admins.append(self.getMessage('ultra_admins', r['admin'], r['id'], r['level']))
-                    cursor.moveNext()
-            cursor.close()
-            for b in admins:
-                cmd.sayLoudOrPM(client,  b)
-            return False
         else:
             variable = input[0]
             if (variable == "100") or (variable == "superadmin") or (variable == "superadmins"):
@@ -349,7 +336,7 @@ class UltraadminPlugin(b3.plugin.Plugin):
                 level = 80
             elif (variable == "60") or (variable == "fulladmin") or (variable == "fulladmins"):
                 level = 60
-             elif (variable == "40") or (variable == "admins") or (variable == "admin"):
+            elif (variable == "40") or (variable == "admins") or (variable == "admin"):
                 level = 40
             elif (variable == "20") or (variable == "mod") or (variable == "moderators"):
                 level = 20
@@ -361,64 +348,38 @@ class UltraadminPlugin(b3.plugin.Plugin):
                 level = 5
             elif (variable == "2") or (variable == "reg") or (variable == "regulars"):
                 level = 2
-                
-            cursor = self.console.storage.query("""SELECT clients.id, COALESCE((SELECT DISTINCT aliases.alias FROM aliases WHERE aliases.client_id =  clients.id ORDER BY aliases.num_used DESC LIMIT 1), clients.name ) AS admin, level FROM clients, groups WHERE clients.group_bits = groups.id AND level = %s ORDER BY group_bits DESC """ % level)
-            admins = []
-            if cursor.rowcount > 0:
-                while not cursor.EOF:
-                    r = cursor.getRow()
-                    admin = r['admin']
-                    id = r['id']
-                    level = r['level']
-                    admins.append(self.getMessage('ultra_admins', r['admin'], r['id'], r['level']))
-                    cursor.moveNext()
-            cursor.close()
-            for b in admins:
-                cmd.sayLoudOrPM(client,  b)
-            return False
-
             elif (variable == "1") or (variable == "user") or (variable == "users"):
                 if client.maxLevel < 100:
                     client.message('Only superadmins can see all users')
                     return False
                 else:
                     level = 1
-                    cursor = self.console.storage.query("""SELECT clients.id, COALESCE((SELECT DISTINCT aliases.alias FROM aliases WHERE aliases.client_id =  clients.id ORDER BY aliases.num_used DESC LIMIT 1), clients.name ) AS admin, level FROM clients, groups WHERE clients.group_bits = groups.id AND level = %s ORDER BY group_bits DESC """ % level)
-                    admins = []
-                    if cursor.rowcount > 0:
-                        while not cursor.EOF:
-                            r = cursor.getRow()
-                            admin = r['admin']
-                            id = r['id']
-                            level = r['level']
-                            admins.append(self.getMessage('ultra_admins', r['admin'], r['id'], r['level']))
-                            cursor.moveNext()
-                    cursor.close()
-                    for b in admins:
-                        cmd.sayLoudOrPM(client,  b)
-                    return False
             elif (variable == "0") or (variable == "guest") or (variable == "guests"):
                 if client.maxLevel < 100:
                     client.message('Only superadmins can see all guests')
                     return False
                 else:
                     level = 0
-                    cursor = self.console.storage.query("""SELECT clients.id, COALESCE((SELECT DISTINCT aliases.alias FROM aliases WHERE aliases.client_id =  clients.id ORDER BY aliases.num_used DESC LIMIT 1), clients.name ) AS admin, level FROM clients, groups WHERE clients.group_bits = groups.id AND level = %s ORDER BY group_bits DESC """ % level)
-                    admins = []
-                    if cursor.rowcount > 0:
-                        while not cursor.EOF:
-                            r = cursor.getRow()
-                            admin = r['admin']
-                            id = r['id']
-                            level = r['level']
-                            admins.append(self.getMessage('ultra_admins', r['admin'], r['id'], r['level']))
-                            cursor.moveNext()
-                    cursor.close()
-                    for b in admins:
-                        cmd.sayLoudOrPM(client,  b)
-                    return False
             else:
                 client.message("Couldn't find your request")
+                return False
+            
+            cursor = self.console.storage.query("""SELECT clients.id, COALESCE((SELECT DISTINCT aliases.alias FROM aliases WHERE aliases.client_id =  clients.id ORDER BY aliases.num_used DESC LIMIT 1), clients.name ) AS admin, level FROM clients, groups WHERE clients.group_bits = groups.id AND level = %s ORDER BY group_bits DESC """ % level)
+        
+        admins = []
+        if cursor.rowcount > 0:
+            while not cursor.EOF:
+                r = cursor.getRow()
+                admin = r['admin']
+                id = r['id']
+                level = r['level']
+                admins.append(self.getMessage('ultra_admins', r['admin'], r['id'], r['level']))
+                cursor.moveNext()
+        cursor.close()
+        
+        for b in admins:
+            cmd.sayLoudOrPM(client,  b)
+        return False
     
     def cmd_listplugins(self, data, client=None, cmd=None):
         """\
