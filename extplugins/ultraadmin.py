@@ -261,7 +261,7 @@ class UltraadminPlugin(b3.plugin.Plugin):
         
     def cmd_ultrab3(self, data, client=None, cmd=None):
         """\
-        or <variable> - list ultra information about the server.
+        or <variable> - list ultra information about b3.
         """
         
         
