@@ -24,6 +24,7 @@ import b3.plugin
 from b3.translator import translate
 from b3 import geoip
 from b3 import functions
+from b3.functions import getModule
 #--------------------------------------------------------------------------------------------------
 class UltraadminPlugin(b3.plugin.Plugin):
     _adminPlugin = None
